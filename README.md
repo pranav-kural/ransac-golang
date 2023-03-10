@@ -96,3 +96,7 @@ When the number of values to be sent is known at channel creation time, a buffer
 - Pipelines unblock senders either by ensuring there’s enough buffer for all the values that are sent or by explicitly signalling senders when the receiver may abandon the channel
 - When using buffered channels, you could read from the channel even after the channel has been closed by the upstream, as long as there are pending elements to be read in that outbound channel
 - Use done channel pattern to signal cancellation
+
+## Backlog
+
+1. Using concurrency when reading file and creating points
