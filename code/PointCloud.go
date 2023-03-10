@@ -79,3 +79,34 @@ func getPoint3D(pointsData string) (Point3D, error) {
 
 	return Point3D{x, y, z}, nil
 }
+
+// save a file with provided filename and points data
+func saveXYZ(filename string, points []Point3D) error {
+	// validate filename
+	if (filename == "") {
+			return errors.New("No filename provided")
+	}
+
+	// create & open the file if doesn't exist
+	file, err := os.Create(filename)
+	if (err != nil) {
+			return errors.New("Could not open file")
+	}
+
+	// if open successful, defer closing the file
+	defer file.Close()
+
+	// create a writer to write to the file
+	writer := bufio.NewWriter(file)
+
+	// write the points to the file
+	for _, point := range points {
+		// write the point to the file
+		_, err := writer.WriteString(point.String() + "\n")
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
