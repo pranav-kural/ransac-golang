@@ -18,13 +18,17 @@ func gen(nums ...int) <-chan int {
 }
 
 // stage 2: sq
-func sq(in <- chan int) <-chan int {
+func sq(done <-chan struct{}, in <-chan int) <-chan int {
 	out := make(chan int)
 	go func() {
+		defer close(out)
 		for n := range in {
-			out <- n * n
+			select {
+			case out <- n * n:
+			case <- done:
+				return
+			}
 		}
-		close(out)
 	}()
 	return out
 }
@@ -36,22 +40,31 @@ func printSqs() {
 	c1 := gen(2,4,6,8,10)
 	c2 := gen(3,5,7,9,11)
 
-	for n := range merge(sq(c1), sq(c2)) {
+	// excplicit cancellation
+	done := make(chan struct{})
+	defer close(done)
+	
+	for n := range merge(done, sq(done, c1), sq(done, c2)) {
 		fmt.Println(n)
 	}
 }
 
-func merge(cs ...<-chan int) <-chan int {
+func merge(done <-chan struct{}, cs ...<-chan int) <-chan int {
 	var wg sync.WaitGroup
 	wg.Add(len(cs))
 	out := make(chan int, 1)
 
 	// new gorountine for for input channel to copy val to output chan
 	output := func(c <-chan int) {
+		// ensure done is called on return path for each output go rountine
+		defer wg.Done()
 		for n := range c {
-			out <- n
+			select {
+			case out <- n:
+			case <- done:
+				return
+			}
 		}
-		wg.Done()
 	}
 	for _, c := range cs {
 		go output(c)

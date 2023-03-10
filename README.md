@@ -22,6 +22,7 @@ In order:
     1. Input channel received an array of Point3D (containing 3 points)
     2. Output channel sends array of Point3D (containing those 3 points)
     3. Repeats until 'N' arrays are received
+       1. Output channel can be buffered with size N
 4.  Plane estimator
     1. Input channel reads an array of Point3D (containing 3 points)
     2. Output channel transmits a Plane3D (computed using those 3 points)
@@ -34,13 +35,13 @@ In order:
     2. Combines received instances of into one
     3. From multiple input channels to one output channel
 7.  Dominant plane identifier (end)
-    1. Received Plane3DwSupport instances and keeps in memory the plane with the best support
+    1. Received Plane3DwSupport instances and keeps in memory the plane with the best support![Alt text](https://cwstatic.nyc3.digitaloceanspaces.com/2021/06/16/images/2/CrossTower%20Exchange%20Trading%20View.png)
 
 # Research
 
 ## Pipelines
 
-- a pipeline is a series of stages connected by channels
+- A pipeline is a series of stages connected by channels
   - each stage is a group of goroutines running the same function
 - In each stage, the goroutines
   - receive values from upstream via inbound channels
@@ -88,3 +89,10 @@ func merge(cs ...<-chan int) <-chan int {
 
 When the number of values to be sent is known at channel creation time, a buffer can simplify the code
 
+### Guidelines for pipeline construction:
+
+- stages close their outbound channels when all the send operations are done
+- stages keep receiving values from inbound channels until those channels are closed or the senders are unblocked
+- Pipelines unblock senders either by ensuring there’s enough buffer for all the values that are sent or by explicitly signalling senders when the receiver may abandon the channel
+- When using buffered channels, you could read from the channel even after the channel has been closed by the upstream, as long as there are pending elements to be read in that outbound channel
+- Use done channel pattern to signal cancellation
