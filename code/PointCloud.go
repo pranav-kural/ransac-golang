@@ -8,14 +8,21 @@ import (
 	"strings"
 )
 
-// separator used to separate the coordinates of a point in point cloud data file
-var POINTS_SEPARATOR = " "
+// default separator used to separate the coordinates of a point in point cloud data file
+var POINTS_SEPARATOR = "\\s+"
+// store the default points coordinate labels
+var POINTS_COORDINATES_LABELS = "x y z"
 
 // method to read the points from a file, and return an array containing Point3D instances
-func readXYZ(filename string) (points []Point3D, err error) {
+func readXYZ(filename string, args ...string) (points []Point3D, err error) {
 		// validate filename
 		if (filename == "") {
 				return points, errors.New("No filename provided")
+		}
+
+		// if separator provided, use it
+		if len(args) > 0 {
+			POINTS_SEPARATOR = args[0]
 		}
 
 		// open the file
@@ -81,10 +88,15 @@ func getPoint3D(pointsData string) (Point3D, error) {
 }
 
 // save a file with provided filename and points data
-func saveXYZ(filename string, points []Point3D) error {
+func saveXYZ(filename string, points []Point3D, args ...string) error {
 	// validate filename
 	if (filename == "") {
 			return errors.New("No filename provided")
+	}
+
+	// if custom coordinates labels provided, use them
+	if len(args) > 0 {
+		POINTS_COORDINATES_LABELS = args[0]
 	}
 
 	// create & open the file if doesn't exist
@@ -98,6 +110,12 @@ func saveXYZ(filename string, points []Point3D) error {
 
 	// create a writer to write to the file
 	writer := bufio.NewWriter(file)
+
+	// write the header
+	_, err = writer.WriteString(POINTS_COORDINATES_LABELS + "\n")
+	if err != nil {
+		return err
+	}
 
 	// write the points to the file
 	for _, point := range points {
