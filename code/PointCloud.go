@@ -1,4 +1,4 @@
-package ransac
+package code
 
 import (
 	"bufio"
@@ -24,7 +24,7 @@ var POINTS_COORDINATES_LABELS = "x y z"
 func readXYZ(filename string, args ...string) (pointsCloud PointCloud, err error) {
 		// validate filename
 		if (filename == "") {
-				return pointsCloud, errors.New("No filename provided")
+				return pointsCloud, errors.New("no filename provided")
 		}
 
 		// if separator provided, use it
@@ -35,7 +35,7 @@ func readXYZ(filename string, args ...string) (pointsCloud PointCloud, err error
 		// open the file
 		file, err := os.Open(filename)
 		if (err != nil) {
-				return pointsCloud, errors.New("Could not open file")
+				return pointsCloud, errors.New("could not open file")
 		}
 
 		// if open successful, defer closing the file
@@ -43,15 +43,13 @@ func readXYZ(filename string, args ...string) (pointsCloud PointCloud, err error
 
 		// create a scanner to read the file
 		scanner := bufio.NewScanner(file)
-		// temporary variable to store the point
-		point := Point3D{}
 		// store points in an array
 		points := []Point3D{}
 
 		// read the file line by line and for each line read, extract the Point3D object and store it in the points array
 		for scanner.Scan() {
 			// attempt to extract a Point3D from the line information
-			point, err = getPoint3D(scanner.Text())
+			point, err := getPoint3D(scanner.Text())
 			// if error, return the error and stop reading the file
 			if err != nil {
 				return pointsCloud, err
@@ -76,7 +74,7 @@ func getPoint3D(pointsData string) (Point3D, error) {
 
 	// check we do have a 3d point
 	if len(pointData) != 3 {
-		return Point3D{}, errors.New("Invalid number of points provided in pointsData")
+		return Point3D{}, errors.New("invalid number of points provided in pointsData")
 	}
 
 	// parse points (might throw exception)
@@ -100,7 +98,7 @@ func getPoint3D(pointsData string) (Point3D, error) {
 func saveXYZ(filename string, points []Point3D, args ...string) error {
 	// validate filename
 	if (filename == "") {
-			return errors.New("No filename provided")
+			return errors.New("no filename provided")
 	}
 
 	// if custom coordinates labels provided, use them

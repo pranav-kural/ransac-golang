@@ -1,4 +1,4 @@
-package main
+package example
 
 import (
 	"fmt"
@@ -81,6 +81,6 @@ func merge(done <-chan struct{}, cs ...<-chan int) <-chan int {
 }
 
 // main function
-func main()  {
+func init()  {
 	printSqs()
 }

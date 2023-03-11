@@ -1,4 +1,4 @@
-package ransac
+package code
 
 import (
 	"fmt"
@@ -54,7 +54,7 @@ func (p Plane3D) String() string {
 }
 
 // method to return an array of points that support the plane
-func (p *Plane3D) GetSupportingPoints(points []Point3D, eps float64) []Point3D {
+func (p *Plane3D) GetSupportingPoints(points []Point3D, eps float64) *[]Point3D {
 	// create an array of points that support the plane
 	supportingPoints := make([]Point3D, 0)
 
@@ -67,7 +67,7 @@ func (p *Plane3D) GetSupportingPoints(points []Point3D, eps float64) []Point3D {
 	}
 
 	// return the array of supporting points
-	return supportingPoints
+	return &supportingPoints
 }
 
 // computes the support of a plane in a set of points
@@ -76,5 +76,5 @@ func (plane *Plane3D) GetSupport(points []Point3D, eps float64) Plane3DwSupport 
 	supportingPoints := plane.GetSupportingPoints(points, eps)
 
 	// return the plane with support
-	return Plane3DwSupport{*plane, len(supportingPoints)}
+	return Plane3DwSupport{*plane, len(*supportingPoints)}
 }

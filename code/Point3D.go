@@ -1,4 +1,4 @@
-package ransac
+package code
 
 import (
 	"fmt"
