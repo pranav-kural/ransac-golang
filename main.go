@@ -4,7 +4,8 @@ import (
 	"fmt"
 	"os"
 	"strconv"
-	"github.com/pranav-kural/ransac-golang/tree/main/code"
+
+	"github.com/pranav-kural/ransac-golang/code"
 )
 
 // method to parse command line arguments
@@ -56,5 +57,5 @@ func main() {
 	fmt.Println("Epsilon: ", eps)
 
 	// run RANSAC algorithm
-	RANSAC(filename, confidence, percentageOfPointsOnPlane, eps)
+	code.RANSAC(filename, confidence, percentageOfPointsOnPlane, eps)
 }
