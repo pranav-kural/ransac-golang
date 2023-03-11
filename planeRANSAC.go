@@ -6,6 +6,7 @@ import (
 	"strconv"
 
 	"github.com/pranav-kural/ransac-golang/code"
+	"github.com/pranav-kural/ransac-golang/test"
 )
 
 // method to parse command line arguments
@@ -37,6 +38,14 @@ func parseArguments(filename string, confidence string, percentageOfPointsOnPlan
 }
 
 func main() {
+
+	// if first argument is "test", run test
+	if len(os.Args) > 1 && os.Args[1] == "test" {
+		// test RANSAC performance
+		test.TestRANSAC()
+		os.Exit(0)
+	}
+
 	// main program must be supplied with 4 command line arguments
 	if len(os.Args) != 5 {
 		fmt.Println("Invalid number of arguments: ", len(os.Args))

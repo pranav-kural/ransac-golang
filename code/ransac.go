@@ -61,7 +61,6 @@ func getDominantPlane(numOfIterations int, pointCloud PointCloud, eps float64) D
 // method to retrieve given number of dominant planes from the point cloud
 // returns an array containing dominant planes and the point cloud without the points belonging to the dominant planes
 func getDominantPlanes(numOfIterations int, pointCloud PointCloud, eps float64, numOfDominantPlanes ...int) ([]DominantPlane, PointCloud) {
-	fmt.Println("Identifying dominant planes...")
 		// store the dominant planes
 		dominantPlanes := []DominantPlane{}
 		// if the number of dominant planes is not specified, set it to the default value
@@ -78,10 +77,7 @@ func getDominantPlanes(numOfIterations int, pointCloud PointCloud, eps float64, 
 				dominantPlanes = append(dominantPlanes, dominantPlane)
 				// remove the points on the dominant plane from the point cloud
 				cloud = cloud.RemovePlane(&dominantPlane.Plane3D, eps)
-				saveXYZ("data/output/points_removed_" + strconv.Itoa(i) + ".xyz", cloud.points)
 		}
-
-		fmt.Println("Dominant planes identified successfully")
 
 		// return the array of dominant planes and the points cloud without the points belonging to the dominant planes
 		return dominantPlanes, cloud

@@ -97,6 +97,26 @@ When the number of values to be sent is known at channel creation time, a buffer
 - When using buffered channels, you could read from the channel even after the channel has been closed by the upstream, as long as there are pending elements to be read in that outbound channel
 - Use done channel pattern to signal cancellation
 
+## Testing
+
+### Performance
+
+Initial performance test for sequential RANSAC implementation:
+
+```
+Test RANSAC run parameters:
+Point Cloud Files:  [data/datasets/PointCloud1.xyz data/datasets/PointCloud2.xyz data/datasets/PointCloud3.xyz]
+Number of tests:  30
+Confidence:  0.99
+Percentage of points on plane:  0.3
+Epsilon:  0.5
+
+Average run times:
+PointCloud 1 : 0.143937529
+PointCloud 2: 0.1748237916
+PointCloud 3 : 0.17469329179999998
+```
+
 ## Backlog
 
 1. Using concurrency when reading file and creating points
