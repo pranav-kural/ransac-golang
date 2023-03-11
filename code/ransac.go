@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"math"
 	"os"
-	"strings"
 	"strconv"
+	"strings"
 )
 
 // default number of dominant planes to be identified

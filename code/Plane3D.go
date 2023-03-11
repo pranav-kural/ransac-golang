@@ -25,7 +25,7 @@ func GetPlane(p1, p2, p3 Point3D) Plane3D {
 	normal := GetNormal(p1, p2, p3)
 
 	// compute the distance of the plane from the origin
-	distance := normal.GetDistance(&p1)
+	distance := -(normal.X*p1.X + normal.Y*p1.Y + normal.Z*p1.Z)
 
 	// return the plane
 	return Plane3D{normal.X, normal.Y, normal.Z, distance}

@@ -137,9 +137,13 @@ func saveXYZ(filename string, points []Point3D, args ...string) error {
 		// write the point to the file
 		_, err := writer.WriteString(point.String() + "\n")
 		if err != nil {
+			fmt.Println("Error writing point to file: " + point.String() + " (" + err.Error() + ")")
 			return err
 		}
 	}
+
+	// flush the writer
+	writer.Flush()
 
 	return nil
 }
