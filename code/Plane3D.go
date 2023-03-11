@@ -61,7 +61,7 @@ func (p *Plane3D) GetSupportingPoints(points []Point3D, eps float64) *[]Point3D 
 	// iterate over all points
 	for _, point := range points {
 		// if the point is on the plane, add it to the array
-		if p.GetDistance(&point) < eps {
+		if p.GetDistance(&point) <= eps {
 			supportingPoints = append(supportingPoints, point)
 		}
 	}

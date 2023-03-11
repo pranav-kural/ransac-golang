@@ -3,6 +3,7 @@ package code
 import (
 	"bufio"
 	"errors"
+	"fmt"
 	"math/rand"
 	"os"
 	"strconv"
@@ -16,9 +17,9 @@ type PointCloud struct {
 }
 
 // default separator used to separate the coordinates of a point in point cloud data file
-var POINTS_SEPARATOR = "\\s+"
+var POINTS_SEPARATOR = " "
 // store the default points coordinate labels
-var POINTS_COORDINATES_LABELS = "x y z"
+var pointsCoordinatesLabels = "x y z"
 
 // method to read the points from a file, and return an array containing Point3D instances
 func readXYZ(filename string, args ...string) (pointsCloud PointCloud, err error) {
@@ -46,6 +47,11 @@ func readXYZ(filename string, args ...string) (pointsCloud PointCloud, err error
 		// store points in an array
 		points := []Point3D{}
 
+		// read the first line of the file to get the points coordinates labels
+		if scanner.Scan() {
+			pointsCoordinatesLabels = scanner.Text()
+		}
+
 		// read the file line by line and for each line read, extract the Point3D object and store it in the points array
 		for scanner.Scan() {
 			// attempt to extract a Point3D from the line information
@@ -69,12 +75,12 @@ func getPoint3D(pointsData string) (Point3D, error) {
 		return Point3D{}, errors.New("pointsData invalid, is empty")
 	}
 
-	// get data for each point
-	pointData := strings.Split(pointsData, POINTS_SEPARATOR)
-
+	// get data for each point separated by the separator and trim spaces
+	pointData := strings.Fields(pointsData)
+	
 	// check we do have a 3d point
 	if len(pointData) != 3 {
-		return Point3D{}, errors.New("invalid number of points provided in pointsData")
+		return Point3D{}, errors.New("invalid number of points provided in pointsData: " + pointsData)
 	}
 
 	// parse points (might throw exception)
@@ -101,15 +107,17 @@ func saveXYZ(filename string, points []Point3D, args ...string) error {
 			return errors.New("no filename provided")
 	}
 
+	fmt.Println("Saving file: " + filename)
+
 	// if custom coordinates labels provided, use them
 	if len(args) > 0 {
-		POINTS_COORDINATES_LABELS = args[0]
+		pointsCoordinatesLabels = args[0]
 	}
 
 	// create & open the file if doesn't exist
 	file, err := os.Create(filename)
 	if (err != nil) {
-			return errors.New("Could not open file")
+			return errors.New("could not open file")
 	}
 
 	// if open successful, defer closing the file
@@ -119,7 +127,7 @@ func saveXYZ(filename string, points []Point3D, args ...string) error {
 	writer := bufio.NewWriter(file)
 
 	// write the header
-	_, err = writer.WriteString(POINTS_COORDINATES_LABELS + "\n")
+	_, err = writer.WriteString(pointsCoordinatesLabels + "\n")
 	if err != nil {
 		return err
 	}

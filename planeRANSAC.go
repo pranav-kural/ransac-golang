@@ -38,7 +38,8 @@ func parseArguments(filename string, confidence string, percentageOfPointsOnPlan
 
 func main() {
 	// main program must be supplied with 4 command line arguments
-	if len(os.Args) != 4 {
+	if len(os.Args) != 5 {
+		fmt.Println("Invalid number of arguments: ", len(os.Args))
 		fmt.Println("Usage: ransac <input file> <confidence> <percentage of points on plane> <eps>")
 		os.Exit(1)
 	}

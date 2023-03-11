@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"math"
 	"os"
+	"strings"
+	"strconv"
 )
 
 // default number of dominant planes to be identified
@@ -59,11 +61,12 @@ func getDominantPlane(numOfIterations int, pointCloud PointCloud, eps float64) D
 // method to retrieve given number of dominant planes from the point cloud
 // returns an array containing dominant planes and the point cloud without the points belonging to the dominant planes
 func getDominantPlanes(numOfIterations int, pointCloud PointCloud, eps float64, numOfDominantPlanes ...int) ([]DominantPlane, PointCloud) {
+	fmt.Println("Identifying dominant planes...")
 		// store the dominant planes
 		dominantPlanes := []DominantPlane{}
 		// if the number of dominant planes is not specified, set it to the default value
 		if len(numOfDominantPlanes) == 0 {
-				numOfDominantPlanes[0] = DEFAULT_NUM_OF_DOMINANT_PLANES
+				numOfDominantPlanes = []int{DEFAULT_NUM_OF_DOMINANT_PLANES}
 		}
 		// store the point cloud
 		cloud := pointCloud
@@ -75,9 +78,22 @@ func getDominantPlanes(numOfIterations int, pointCloud PointCloud, eps float64, 
 				dominantPlanes = append(dominantPlanes, dominantPlane)
 				// remove the points on the dominant plane from the point cloud
 				cloud = cloud.RemovePlane(&dominantPlane.Plane3D, eps)
+				saveXYZ("data/output/points_removed_" + strconv.Itoa(i) + ".xyz", cloud.points)
 		}
+
+		fmt.Println("Dominant planes identified successfully")
+
 		// return the array of dominant planes and the points cloud without the points belonging to the dominant planes
 		return dominantPlanes, cloud
+}
+
+// method to get the output filename
+func getOutputFilename(filename string) (file string) {
+	// remove substring '.xyz' from filename if it exists, and dd output path
+	// remove "/data/datasets/" from filename if it exists
+	file = strings.Replace(filename, "data/datasets/", "", -1)
+	file = "data/output/" + strings.Replace(file, ".xyz", "", -1) + "_p"
+	return
 }
 
 func RANSAC(filename string, confidence, percentageOfPointsOnPlane, eps float64) {
@@ -100,17 +116,25 @@ func RANSAC(filename string, confidence, percentageOfPointsOnPlane, eps float64)
 	// get the dominant planes and the point cloud without the points belonging to the dominant planes
 	dominantPlanes, cloud := getDominantPlanes(numOfIterations, pointCloud, eps)
 
-	fmt.Println("RANSAC completed. Dominant planes identified successfully")
+	fmt.Println("RANSAC completed")
 	fmt.Println("Number of dominant planes: ", len(dominantPlanes))
 
 	// size of points covered by dominant planes
 	dominantPlanesSize := 0
 
+	// get the output filename
+	filename = getOutputFilename(filename)
+
 	// save each dominant plane to a file
 	for i, plane := range dominantPlanes {
-		saveXYZ(fmt.Sprintf(filename, "_p%d.xyz", i+1), plane.points)
+		err := saveXYZ(filename + strconv.Itoa(i+1) + ".xyz", plane.points)
+		// if error saving dominant plane, print error and exit
+		if err != nil {
+			fmt.Println("Unable to save dominant plane", err)
+			os.Exit(1)
+		}
 		// print size of each dominant plane
-		fmt.Printf("Dominant plane %d size: %d points", i+1, plane.supportSize)
+		fmt.Printf("Dominant plane %d size: %d points \n", i+1, plane.supportSize)
 		// update the size of points covered by dominant planes
 		dominantPlanesSize += plane.supportSize
 	}
@@ -118,7 +142,7 @@ func RANSAC(filename string, confidence, percentageOfPointsOnPlane, eps float64)
 	fmt.Println("Dominant planes saved successfully")
 
 	// save the point cloud without the points belonging to the dominant planes to a file
-	saveXYZ(filename + "_p0.xyz", cloud.points)
+	saveXYZ(filename + "0.xyz", cloud.points)
 
 	fmt.Println("Point cloud without dominant planes saved successfully")
 

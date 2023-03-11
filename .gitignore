@@ -1,0 +1,2 @@
+# ignore point cloud output files
+./data/output/*
