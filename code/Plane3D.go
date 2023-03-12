@@ -33,35 +33,21 @@ func GetPlane(p1, p2, p3 Point3D) Plane3D {
 }
 
 // received array containing 3 Point3D objects and sends back a Plane3D object through output channel
-func GetPlaneC(pointsIn <-chan [3]Point3D, done <-chan bool) <-chan Plane3D {
-	fmt.Println("********** GetPlaneC started **********")
+func GetPlaneC(pointsIn <-chan [3]Point3D) <-chan Plane3D {
+	dprint("********** GetPlaneC started **********")
 	// outbound channel
 	planeOut := make(chan Plane3D)
 	// goroutine to compute the plane
 	go func() {
 		defer close(planeOut)
-		defer fmt.Println("********** GetPlaneC done **********")
-
+		defer dprint("********** GetPlaneC done **********")
+		// until we have points coming in on the inbound channel
 		for points := range pointsIn {
 			// get array of points from inbound channel
 			// compute the plane
 			// send plane on outbound channel
 			planeOut <- GetPlane(points[0], points[1], points[2])
 		}
-
-		// // until we receive a message on the done channel
-		// // send a Plane3D object on the outbound channel
-		// for {
-		// 	select {
-		// 	case <-done:
-		// 		return
-		// 	case points := <-pointsIn:
-		// 		// get array of points from inbound channel
-		// 		// compute the plane
-		// 		// send plane on outbound channel
-		// 		planeOut <- GetPlane(points[0], points[1], points[2])
-		// 	}
-		// }
 	}()
 	// return the outbound channel
 	return planeOut
@@ -104,4 +90,21 @@ func (p *Plane3D) GetSupportingPointss(points []Point3D, eps float64) *[]Point3D
 
 	// return the array of supporting points
 	return &supportingPoints
+}
+
+// method to return an array of points that support the plane
+func GetSupportingPoints(p *Plane3D, points []Point3D, eps float64) int {
+	// create an array of points that support the plane
+	supportingPoints := make([]Point3D, 0)
+
+	// iterate over all points
+	for _, point := range points {
+		// if the point is on the plane, add it to the array
+		if p.GetDistance(&point) <= eps {
+			supportingPoints = append(supportingPoints, point)
+		}
+	}
+
+	// return the array of supporting points
+	return len(supportingPoints)
 }

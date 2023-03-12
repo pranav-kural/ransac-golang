@@ -9,7 +9,9 @@ import (
 )
 
 // default number of dominant planes to be identified
-const DEFAULT_NUM_OF_DOMINANT_PLANES int = 1
+const DEFAULT_NUM_OF_DOMINANT_PLANES int = 3
+// additional message are printed if DEBUG is true
+var DEBUG bool = false
 
 // method to compute the number of iterations needed for RANSAC
 func getNumberOfIterations(confidence float64, perctangeOfPointsOnPlane float64) int {
@@ -32,13 +34,13 @@ func DominantPlaneIdentifier(numOfIterations int, pointCloud PointCloud, eps flo
 	randomPointsChan := pointCloud.TakeN(numOfIterations)
 
 	// get plane
-	plane := GetPlaneC(randomPointsChan, done)
+	plane := GetPlaneC(randomPointsChan)
 
 	// get supporting points
-	supportingPoints := pointCloud.GetSupportingPointsC(&plane, &eps, done)
+	supportingPoints := pointCloud.GetSupportingPointsC(plane, eps)
 
 	// get best plane
-	bestPlane := fanIn(supportingPoints, done)
+	bestPlane := fanIn(supportingPoints)
 
 	// close all upstream channels by sending a message on the done channel
 	//done <- true
@@ -47,7 +49,7 @@ func DominantPlaneIdentifier(numOfIterations int, pointCloud PointCloud, eps flo
 }
 
 // fanIn method receives Plane3DwSupport instances from inbound channel and sends back the best plane with the most supporting points on the outbound channel
-func fanIn(supportingPointsIn <-chan Plane3DwSupport, done <-chan bool) <-chan Plane3DwSupport {
+func fanIn(supportingPointsIn <-chan Plane3DwSupport) <-chan Plane3DwSupport {
 	// outbound channel
 	bestPlaneOut := make(chan Plane3DwSupport)
 	// store best support
@@ -57,24 +59,15 @@ func fanIn(supportingPointsIn <-chan Plane3DwSupport, done <-chan bool) <-chan P
 	// goroutine to find the best plane
 	go func() {
 		defer close(bestPlaneOut)
-		// until we receive a message on the done channel
-		// send the best plane on the outbound channel
-		for {
-			select {
-			case <-done:
-				return
-			case plane := <-supportingPointsIn:
-				// get plane from inbound channel
-				// if the plane has more supporting points than the current best plane
-				if plane.SupportSize > bestSupport {
-					// update the best support
-					bestSupport = plane.SupportSize
-					// update the best plane
-					bestPlane = plane
-					fmt.Println("Best support size: " + strconv.Itoa(bestSupport))
-				}
-			default:
-				return
+		// until we receive plane on the inbound channel
+		for plane := range supportingPointsIn {
+			// get plane from inbound channel
+			// if the plane has more supporting points than the current best plane
+			if plane.SupportSize > bestSupport {
+				// update the best support
+				bestSupport = plane.SupportSize
+				// update the best plane
+				bestPlane = plane
 			}
 		}
 		// send the best plane on the outbound channel
@@ -173,4 +166,11 @@ func RANSAC(filename string, confidence, percentageOfPointsOnPlane, eps float64)
 	fmt.Println("Total number of points: ", len(pointCloud.points))
 
 	fmt.Println("Program completed successfully :)")
+}
+
+// method to print messages when DEBUG mode is on
+func dprint(s string) {
+	if DEBUG {
+		fmt.Println(s)
+	}
 }

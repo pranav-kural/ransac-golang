@@ -1,3 +1,38 @@
+# CSI2120 - Project Part 2
+
+Student name: Pranav
+Student number: 300241227
+
+## Project Structure
+
+Run from command line as below:
+
+```
+go run ./planeRANSAC.go "data/datasets/PointCloud1.xyz" 0.99 0.3 0.5
+```
+
+To run performance test (doesn't create output files):
+
+```
+go run ./planeRANSAC.go "test"
+```
+
+## Table of Contents
+
+- [CSI2120 - Project Part 2](#csi2120---project-part-2)
+  - [Project Structure](#project-structure)
+  - [Table of Contents](#table-of-contents)
+- [Planning](#planning)
+  - [Main Program](#main-program)
+  - [Components](#components)
+- [Research](#research)
+  - [Pipelines](#pipelines)
+    - [Fan-out, fan-in](#fan-out-fan-in)
+    - [Guidelines for pipeline construction:](#guidelines-for-pipeline-construction)
+  - [Testing](#testing)
+    - [Performance](#performance)
+  - [Backlog](#backlog)
+
 # Planning
 
 ## Main Program
@@ -115,6 +150,22 @@ Average run times:
 PointCloud 1 : 0.143937529
 PointCloud 2: 0.1748237916
 PointCloud 3 : 0.17469329179999998
+```
+
+Performance for concurrent version:
+
+```
+Test RANSAC run parameters:
+Point Cloud Files:  [data/datasets/PointCloud1.xyz data/datasets/PointCloud2.xyz data/datasets/PointCloud3.xyz]
+Number of tests:  30
+Confidence:  0.99
+Percentage of points on plane:  0.3
+Epsilon:  0.5
+
+Average run times:
+PointCloud 1 :  0.088637621
+PointCloud 2 :  0.107731
+PointCloud 3 :  0.10636125010000001
 ```
 
 ## Backlog
