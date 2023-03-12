@@ -25,10 +25,6 @@ func getNumberOfIterations(confidence float64, perctangeOfPointsOnPlane float64)
 }
 
 func DominantPlaneIdentifier(numOfIterations int, pointCloud PointCloud, eps float64) Plane3DwSupport {
-
-	// done channel
-	done := make(chan bool)
-	defer close(done)
 	
 	// receive array containing random points for numOfIterations
 	randomPointsChan := pointCloud.TakeN(numOfIterations)
@@ -41,9 +37,6 @@ func DominantPlaneIdentifier(numOfIterations int, pointCloud PointCloud, eps flo
 
 	// get best plane
 	bestPlane := fanIn(supportingPoints)
-
-	// close all upstream channels by sending a message on the done channel
-	//done <- true
 	
 	return <-bestPlane
 }
