@@ -1,7 +1,8 @@
-# CSI2120 - Project Part 2
+# Dominant Plane Detection Using RANSAC
 
-Student name: Pranav
-Student number: 300241227
+A simple implementation of RANSAC algorithm for dominant plane detection in a point cloud.
+
+Uses a pipeline architecture to enable concurrent workflows for the computation of the dominant planes.
 
 ## Project Structure
 
@@ -17,9 +18,17 @@ To run performance test (doesn't create output files):
 go run ./planeRANSAC.go "test"
 ```
 
+**File Structure:**
+
+- `~/planeRANSAC.go` contains the main program
+- `~/code/ransac.go` contains the actual implementation of RANSAC algorithm
+- `~/code/` directory contains code needed for RANSAC
+- `~/data/datasets/` directory contains the point cloud files
+- `~/data/output/` directory contains the output files
+
 ## Table of Contents
 
-- [CSI2120 - Project Part 2](#csi2120---project-part-2)
+- [Dominant Plane Detection Using RANSAC](#dominant-plane-detection-using-ransac)
   - [Project Structure](#project-structure)
   - [Table of Contents](#table-of-contents)
 - [Planning](#planning)
@@ -31,7 +40,7 @@ go run ./planeRANSAC.go "test"
     - [Guidelines for pipeline construction:](#guidelines-for-pipeline-construction)
   - [Testing](#testing)
     - [Performance](#performance)
-  - [Backlog](#backlog)
+- [Feedback](#feedback)
 
 # Planning
 
@@ -168,6 +177,6 @@ PointCloud 2 :  0.107731
 PointCloud 3 :  0.10636125010000001
 ```
 
-## Backlog
+# Feedback
 
-1. Using concurrency when reading file and creating points
+If you have any feedback, please feel free to reach out to me on [LinkedIn](https://www.linkedin.com/in/pranavkural) or Discord (code#7167).
