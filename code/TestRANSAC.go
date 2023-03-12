@@ -27,7 +27,7 @@ func TestRANSAC(filename string, confidence, percentageOfPointsOnPlane, eps floa
 	// total size of points covered by dominant planes
 	for _, plane := range dominantPlanes {
 		// update the size of points covered by dominant planes
-		dominantPlanesSize += plane.supportSize
+		dominantPlanesSize += plane.SupportSize
 	}
 
 	// verify result

@@ -5,7 +5,46 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"strconv"
+	"strings"
 )
+
+// default separator used to separate the coordinates of a point in point cloud data file
+var POINTS_SEPARATOR = " "
+// store the default points coordinate labels
+var pointsCoordinatesLabels = "x y z"
+
+// Given a string containing information of three point coordinates, returns a Point3D
+func getPoint3D(pointsData string) (Point3D, error) {
+	// check if pointsData is valid
+	if pointsData == "" {
+		return Point3D{}, errors.New("pointsData invalid, is empty")
+	}
+
+	// get data for each point separated by the separator and trim spaces
+	pointData := strings.Fields(pointsData)
+	
+	// check we do have a 3d point
+	if len(pointData) != 3 {
+		return Point3D{}, errors.New("invalid number of points provided in pointsData: " + pointsData)
+	}
+
+	// parse points (might throw exception)
+	x, err := strconv.ParseFloat(pointData[0], 64)
+	if err != nil {
+		return Point3D{}, err
+	}
+	y, err := strconv.ParseFloat(pointData[1], 64)
+	if err != nil {
+		return Point3D{}, err
+	}
+	z, err := strconv.ParseFloat(pointData[2], 64)
+	if err != nil {
+		return Point3D{}, err
+	}
+
+	return Point3D{x, y, z}, nil
+}
 
 // method to read the points from a file, and return an array containing Point3D instances
 func readXYZ(filename string, args ...string) (pointsCloud PointCloud, err error) {
