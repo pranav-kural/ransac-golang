@@ -79,7 +79,7 @@ In order:
     2. Combines received instances of into one
     3. From multiple input channels to one output channel
 7.  Dominant plane identifier (end)
-    1. Received Plane3DwSupport instances and keeps in memory the plane with the best support![Alt text](https://cwstatic.nyc3.digitaloceanspaces.com/2021/06/16/images/2/CrossTower%20Exchange%20Trading%20View.png)
+    1. Received Plane3DwSupport instances and keeps in memory the plane with the best support
 
 # Research
 
